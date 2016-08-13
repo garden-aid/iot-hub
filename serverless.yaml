@@ -19,7 +19,7 @@ resources:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
-        TableName: moisture_data_raw
+        TableName: moisture-data-${{stageName}}
         AttributeDefinitions:
           -
             AttributeName: ClientId
@@ -39,9 +39,8 @@ resources:
           WriteCapacityUnits: 1
 
     SensorThing:
-      Type: "AWS::IoT::Thing"
+      Type: AWS::IoT::Thing
       Properties:
-        ThingName: "soil-sensor"
         AttributePayload:
            Attributes:
             SensorType: soil
@@ -51,7 +50,6 @@ resources:
     SensorThingRule:
       Type: AWS::IoT::TopicRule
       Properties:
-        RuleName: soil_sensor_store_data
         TopicRulePayload:
           RuleDisabled: false
           Sql: "SELECT DeviceId, Recorded, Level FROM 'garden/soil/moisture'"
