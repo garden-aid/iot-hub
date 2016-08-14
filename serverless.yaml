@@ -7,12 +7,17 @@ defaults:
   region: ap-southeast-2
 variableSyntax: '\${{([\s\S]+?)}}' #will be moved to defaults
 package:
-  exclude:
-    - test
+  include:
+    - index.js
+    - src
     - node_modules
+  exclude:
+    - tests
+    - coverage
+    - package.json
 functions:
-  moisture:
-    handler: handler.processMoisture
+  checkMoistureLevel:
+    handler: index.checkMoistureLevel
 resources:
   Resources:
     MoistureData:
@@ -63,6 +68,9 @@ resources:
                 RangeKeyValue: "${timestamp()}"
                 PayloadField: "Data"
                 RoleArn: { Fn::GetAtt: [ IotThingRole, Arn ] }
+            -
+              Lambda:
+                FunctionArn: { Fn::GetAtt: [ checkMoistureLevel, Arn ] }
 
     SensorThingPolicy:
       Type: AWS::IoT::Policy
@@ -110,8 +118,14 @@ resources:
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
-            Effect: Allow
-            Action:
-              - dynamodb:PutItem
-            Resource: "*"
+            -
+              Effect: Allow
+              Action:
+                - dynamodb:PutItem
+              Resource: "*"
+            -
+              Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource: "*"
         Roles: [{ Ref: IotThingRole }]

@@ -17,4 +17,6 @@ fi
 
 echo "Deploying from branch $BRANCH to stage $STAGE"
 
+npm prune --production
+
 sls deploy --stage $STAGE --region $AWS_REGION
