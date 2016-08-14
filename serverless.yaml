@@ -126,7 +126,6 @@ resources:
             -
               Effect: Allow
               Action:
-                - lambda:InvokeAsync
                 - lambda:InvokeFunction
               Resource: "*"
         Roles: [{ Ref: IotThingRole }]
