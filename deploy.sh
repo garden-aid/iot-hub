@@ -17,6 +17,8 @@ fi
 
 echo "Deploying from branch $BRANCH to stage $STAGE"
 
+cp "./config/$STAGE.json" config.json
+
 npm prune --production
 
-sls deploy --stage $STAGE --region $AWS_REGION
+sls-test deploy --stage $STAGE --region $AWS_REGION

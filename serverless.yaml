@@ -2,10 +2,15 @@ service: garden-aid-iot-hub
 provider:
     name: aws
     runtime: nodejs4.3
+    iamRoleStatements:
+       -  Effect: Allow
+          Action:
+            - sns:Publish
+          Resource: "arn:aws:sns:ap-southeast-2:*:*"
 defaults:
   stage: dev
   region: ap-southeast-2
-variableSyntax: '\${{([\s\S]+?)}}' #will be moved to defaults
+  variableSyntax: '\${{([\s\S]+?)}}' #will be moved to defaults
 package:
   include:
     - index.js

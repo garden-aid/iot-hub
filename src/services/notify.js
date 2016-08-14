@@ -12,13 +12,15 @@ const NotifyService = stampit().
     if(!instance.sns) throw new Error('sns is required');
   }).
   methods({
-    publish(msg) {
+    publish(msg, topicArn, cb) {
       const params = {
-        Message: message,
+        Message: JSON.stringify({
+          message: msg
+        }),
         TopicArn: topicArn
       };
 
-      sns.publish(params, cb);
+      this.sns.publish(params, cb);
     },
   });
 

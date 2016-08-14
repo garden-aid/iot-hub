@@ -1,6 +1,4 @@
-
-# Confidential device config
-test/device-config.js
+config.json
 
 #serverless
 .serverless

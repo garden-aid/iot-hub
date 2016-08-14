@@ -11,6 +11,13 @@ const notify = NotifyService({ sns: sns });
 // { DeviceId: 'test-js-device', Recorded: '2016-08-14T12:39:06.765Z', Level: 3.59334681998007 }
 
 module.exports.checkLevel = (event, context, cb) => {
-  console.log(event);
-  cb(null, { message: 'success' });
+  if(event.Level < 2.5) {
+    const msg = 'Moisture level has dropped to ' + event.Level;
+    const topicArn = process.env.mositureNotifyTopic;
+
+    notify.publish(msg, topicArn, cb);
+    return;
+  }
+
+  cb(null, { message: 'No message to publish', event: event });
 }

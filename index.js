@@ -1,7 +1,7 @@
 
-// const secrets = require('./secrets.json');
+const config = require('./config.json');
 
-// require('./env')(secrets);
+require('./env')(config);
 
 // Setup env vars before requiring functions
 const moisture = require('./src/moisture');
