@@ -57,7 +57,7 @@ resources:
       Properties:
         TopicRulePayload:
           RuleDisabled: false
-          Sql: "SELECT DeviceId, Recorded, Level FROM 'garden/soil/moisture'"
+          Sql: "SELECT DeviceId, Recorded, Level FROM '${{topicPrefix}}/soil/moisture'"
           Actions:
             -
               DynamoDB:
@@ -129,3 +129,10 @@ resources:
                 - lambda:InvokeFunction
               Resource: "*"
         Roles: [{ Ref: IotThingRole }]
+
+    LambdaInvokePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: { Fn::GetAtt: [ checkMoistureLevel, Arn ] }
+        Action: lambda:InvokeFunction
+        Principal: iot.amazonaws.com
