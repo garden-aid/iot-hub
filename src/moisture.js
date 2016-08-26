@@ -13,11 +13,15 @@ const notify = NotifyService({ sns: sns });
 module.exports.checkLevel = (event, context, cb) => {
   if(event.Level < 2.5) {
     const msg = 'Moisture level has dropped to ' + event.Level;
+    console.log(msg);
+
     const topicArn = process.env.mositureNotifyTopic;
 
     notify.publish(msg, topicArn, cb);
+    cb(null, { message: msg, event: event });
     return;
   }
 
+  console.log('Not publishing');
   cb(null, { message: 'No message to publish', event: event });
 }
