@@ -2,19 +2,33 @@ service: garden-aid-iot-hub
 provider:
     name: aws
     runtime: nodejs4.3
+    iamRoleStatements:
+       -  Effect: Allow
+          Action:
+            - sns:Publish
+          Resource: "arn:aws:sns:ap-southeast-2:*:*"
 defaults:
   stage: dev
   region: ap-southeast-2
-variableSyntax: '\${{([\s\S]+?)}}' #will be moved to defaults
+  variableSyntax: '\${{([\s\S]+?)}}' #will be moved to defaults
 package:
   include:
-    - index.js
-    - src
     - node_modules
+    - src
   exclude:
-    - tests
     - coverage
+    - tests
+    - .editorconfig
+    - .eslintignore
+    - .gitignore
+    - .synk
+    - .travis.yml
+    - .create-secrets.js
+    - deploy.sh
+    - LICENSE
     - package.json
+    - README.md
+
 functions:
   checkMoistureLevel:
     handler: index.checkMoistureLevel
@@ -57,7 +71,7 @@ resources:
       Properties:
         TopicRulePayload:
           RuleDisabled: false
-          Sql: "SELECT DeviceId, Recorded, Level FROM 'garden/soil/moisture'"
+          Sql: "SELECT DeviceId, Recorded, Level FROM '${{topicPrefix}}/soil/moisture'"
           Actions:
             -
               DynamoDB:
@@ -129,3 +143,10 @@ resources:
                 - lambda:InvokeFunction
               Resource: "*"
         Roles: [{ Ref: IotThingRole }]
+
+    LambdaInvokePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: { Fn::GetAtt: [ checkMoistureLevel, Arn ] }
+        Action: lambda:InvokeFunction
+        Principal: iot.amazonaws.com

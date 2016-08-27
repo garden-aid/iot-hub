@@ -23,6 +23,7 @@
   "homepage": "https://github.com/johncmckim/garden-aid#readme",
   "dependencies": {
     "aws-sdk": "^2.5.0",
+    "iopipe": "0.0.19",
     "stampit": "^2.1.2"
   },
   "devDependencies": {

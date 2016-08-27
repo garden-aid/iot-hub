@@ -1,0 +1,3 @@
+{
+  "mositureNotifyTopic": "arn:aws:sns:ap-southeast-2:200622725330:slack-notify-dev"
+}

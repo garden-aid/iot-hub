@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+if [[ $TRAVIS_PULL_REQUEST == "true" ]]; then
+  echo "Not deploying changes on pull request";
+  exit 0;
+fi
+
 AWS_REGION=${AWS_REGION:-ap-southeast-2}
 BRANCH=${TRAVIS_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
 
@@ -16,6 +21,10 @@ if [ -z ${STAGE+x} ]; then
 fi
 
 echo "Deploying from branch $BRANCH to stage $STAGE"
+
+cp "./config/$STAGE.json" config.json
+
+node ./create-secrets.js # create secrets.json from env variables
 
 npm prune --production
 
