@@ -2,14 +2,12 @@ service: garden-aid-iot-hub
 provider:
   name: aws
   runtime: nodejs4.3
+  variableSyntax: '\${{([\s\S]+?)}}' #will be moved to defaults
   iamRoleStatements:
      -  Effect: Allow
         Action:
           - sns:Publish
         Resource: "arn:aws:sns:ap-southeast-2:*:*"
-
-defaults:
-  variableSyntax: '\${{([\s\S]+?)}}' #will be moved to defaults
 
 custom: ${{file(./vars-${{opt:stage}}.yml)}}
 package:
@@ -33,6 +31,7 @@ package:
 functions:
   checkMoistureLevel:
     handler: index.checkMoistureLevel
+
 resources:
   Resources:
     MoistureData:
