@@ -1,0 +1,6 @@
+iotCertificateArn: >-
+  arn:aws:iot:ap-southeast-2:200622725330:cert/9975f3f819ff940873967f80a171257ed77d34ecbdcedcaa33ae8925d6ee0800
+sensorThingClientResource: >-
+  arn:aws:iot:ap-southeast-2:200622725330:client/${iot:ClientId}
+sensorThingSoilTopicResource: >-
+  arn:aws:iot:ap-southeast-2:200622725330:topic/dev/garden/soil/moisture

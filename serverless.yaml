@@ -1,16 +1,16 @@
 service: garden-aid-iot-hub
 provider:
-    name: aws
-    runtime: nodejs4.3
-    iamRoleStatements:
-       -  Effect: Allow
-          Action:
-            - sns:Publish
-          Resource: "arn:aws:sns:ap-southeast-2:*:*"
-defaults:
+  name: aws
+  runtime: nodejs4.3
   stage: dev
   region: ap-southeast-2
   variableSyntax: '\${{([\s\S]+?)}}' #will be moved to defaults
+  iamRoleStatements:
+     -  Effect: Allow
+        Action:
+          - sns:Publish
+        Resource: "arn:aws:sns:ap-southeast-2:*:*"
+custom: ${{file(./vars-${{opt:stage}}.yml)}}
 package:
   include:
     - node_modules
@@ -38,7 +38,7 @@ resources:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
-        TableName: moisture-data-${{stageName}}
+        TableName: moisture-data-${{opt:stage}}
         AttributeDefinitions:
           -
             AttributeName: ClientId
@@ -71,7 +71,7 @@ resources:
       Properties:
         TopicRulePayload:
           RuleDisabled: false
-          Sql: "SELECT DeviceId, Recorded, Level FROM '${{topicPrefix}}/soil/moisture'"
+          Sql: "SELECT DeviceId, Recorded, Level FROM '${{opt:stage}}/garden/soil/moisture'"
           Actions:
             -
               DynamoDB:
@@ -94,22 +94,22 @@ resources:
           Statement:
             - Effect: Allow
               Action: ["iot:Connect"]
-              Resource: ["${{sensorThingClientResource}}"]
+              Resource: ["${{custom.sensorThingClientResource}}"]
             - Effect: "Allow"
               Action: ["iot:Publish"]
-              Resource: ["${{sensorThingSoilTopicResource}}"]
+              Resource: ["${{custom.sensorThingSoilTopicResource}}"]
 
     SensorPolicyPrincipalAttachmentCert:
       Type: AWS::IoT::PolicyPrincipalAttachment
       Properties:
         PolicyName: { Ref: SensorThingPolicy }
-        Principal: ${{iotCertificateArn}}
+        Principal: ${{custom.iotCertificateArn}}
 
     SensorThingPrincipalAttachmentCert:
       Type: "AWS::IoT::ThingPrincipalAttachment"
       Properties:
         ThingName: { Ref: SensorThing }
-        Principal: ${{iotCertificateArn}}
+        Principal: ${{custom.iotCertificateArn}}
 
     IotThingRole:
        Type: AWS::IAM::Role
